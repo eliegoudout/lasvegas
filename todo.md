@@ -1,0 +1,28 @@
+- [x] .LICENSE
+- [x] requirements
+- [x] README
+- [x] Type hinting.
+	- [ ] `content.py` ndarrays? (`confront` output) (+ in `ui.py`).
+- [x] Complete docstrings
+- [ ] Tests
+- [ ] Add extra documentation (?)
+- [ ] Perf
+- [ ] Competition mode (w/ copy of `GameEnv`)
+- [x] players own/xtr dice property/setter/replace in code
+- [x] Think about utilities, in or out of modules? `legal_plays` a method? Could be good.
+- [x] Add `ui`
+- [x] Continue restructuring.
+- [ ] Maybe redo the whole "xtr dice" thing (careful perf)
+- [ ] Better internal attributes/methods conventions.
+- [x] Better linting.
+- [x] Try straightforward get_winners perf.
+- [ ] GameEnv : reset/replay on same instance?
+- [ ] More consistent asserting behaviour
+- [ ] Mor consistent backquotes.
+- [x] `greedy_shy` clean code.
+- [x] `GameEnv.__call__`: optional args 'number of steps'...
+- [ ] ...and 'until step `step`'.
+- [ ] Better `opt_tqdm`.
+- [ ] Rethink `roll` structure (natural/dict vs sci)
+- [x] Remove roll empty columns
+- [ ] Roll = list of dicts? THINK
