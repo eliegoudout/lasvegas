@@ -2,11 +2,28 @@
 
 This package revolves around _Las Vegas_, the dice boardgame edited by [Ravensburger](https://www.ravensburger.fr/produits/jeux-de-soci%C3%A9t%C3%A9/jeux-d-ambiance/las-vegas-26745/index.html). It provides:
 
-- a CLI playing mode, against humans and/or (possibly custom) agents,
+- a CLI playing mode against humans and/or (possibly custom) agents, with customizable rules,
 - a simple confrontation tool for multiple agents.
 - an agnostic game environment, for agent implementing training,
 
-## 🤓 Requirements 🤓
+
+## ⚙️ Installation ⚙️
+
+At least **Python 3.10** is required.
+
+At the moment, the package is not referenced on PyPi and installation is done via direct cloning. From the folder of your choice -- _e.g._ `workspace/` or your python `site-packages/` --, run the following commands.
+```
+git clone https://github.com/eliegoudout/las-vegas
+cd las-vegas/
+pip install -r requirements.txt
+```
+
+From you Python interpreter, should should be able to `import las_vegas`.
+```pycon
+>>> import las_vegas
+```
+
+#### 🤓 Requirements 🤓
 
 - [numpy](https://github.com/numpy/numpy)
 - [tabulate](https://github.com/astanin/python-tabulate)
@@ -15,16 +32,10 @@ This package revolves around _Las Vegas_, the dice boardgame edited by [Ravensbu
 
 ## 🤜 Play with friends 🤛
 
-Let's start a game, **me** vs **you** vs a **bot** (3 players)! From the folder containing the package, simply type
+Let's start a 3-player game: **me** vs **you** vs (a bad) **bot**:
 ```pycon
-from las_vegas import *
-play_vs(3, humans=["Me", "You"])
-```
-
-You are then prompted to play:
-```pycon
->>> from las_vegas import *
->>> play_vs(3, humans=["Me", "You"])Round: 1/4
+>>> las_vegas.play_vs(3, humans=["Me", "You"])
+Round: 1/4
 Casinos:
 ╭───────────────────┬──────────┬───┬───┬───┬───╮
 │             Bills │ Casinos  │   │ ▼ │   │ × │
@@ -52,36 +63,31 @@ Roll:
 Your play: █
 ```
 
+You are then prompted to play.
+
 #### `Roll` table
 
-By default, in games with 2, 3 or 4 participants, neutral -- or `Xtr` -- dice are rolled along with players' `Own` dice. In the above example, `You` rolled 10 dice (8 of your own plus 2 extra) and got, for example, one neutral `2`. Here, `You` can only choose a play in `{1, 2, 5}`.
+By default, in games with 2, 3 or 4 participants, in addition to their eight `Own` dice, players are given neutral -- or `Xtr` -- dice. In the above example, `You` rolled 10 dice (8 of your own plus 2 extra) and got, for example, one neutral `2`. In the above situation, the set of legal moves is `{1, 2, 5}`.
 
 #### `Players` table
 
-The players cycle is randomized at the beginning of the game and the goes from top to bottom. Every round, the _first player chip_ is passed to the  players next to the one who had it before.
+The players order is randomized at the beginning of the game and cycles from top to bottom.
 
-You can see in the `Players` table that the **bot** curently has the _first player chip_ -- marker `(*)` -- and that it is `You`'s turn to play -- marker `► xxx ◄`.
+Every round, the starting player is the owner of the _first player chip_ `(*)`. At the end of a round, he or she gives it to the next player. You can see in the `Players` table that the **bot** curently has the _first player chip_ and that it is `You`'s turn to play -- marker `► xxx ◄`.
 
-The scores are also written in the leftmost column.
+The current scores are written in the leftmost column.
 
 #### `Casinos` table
 
-It shows how many dice of each player -- or neutral dice -- are on each casino. The columns are ordered from left to right corresponding to players in the `Players` table from top to bottom. The column marked `×` corresponds to neutral dice and the column of the current player is highlighted with the marker `▼`.
+It shows how many dice of each player -- or neutral dice -- are on each casino. The dice columns are ordered from left to right corresponding to players in the `Players` table from top to bottom. The column marked `×` corresponds to neutral dice and the column of the current player is highlighted with the marker `▼`.
 
-The leftmost column shows which bills are winnable in the current round on each casino. By default, they add up to at least `50.000` and are reset every round.
+The leftmost column of the table lists all winnable bills in the current round on each casino. By default, they add up to at least `50.000` and are reset every round.
 
 
 ## 🤖 Benchmark agents 🤖
 
 If you want to benchmark an implemented agent against others, you can use the `confront` function. For example, we can test a `greedy_shy` agent against two uniformly random players -- represented by `None` in the code bellow -- in a 1000-games faceoff. 
-
-```
-import las_vegas
-my_agent = las_vegas.policies.greedy_shy  # Toy example
-las_vegas.confront(my_agent, None, None, games=1000)  # `None` represents the uniformly random policy.
-```
 ```pycon
->>> import las_vegas
 >>> my_agent = las_vegas.policies.greedy_shy  # Toy example
 >>> las_vegas.confront(my_agent, my_agent, None, games=1000)
 100%|███████████████████████████| 1000/1000 [00:01<00:00, 627.67it/s]
@@ -95,10 +101,9 @@ Match in 1000 games:
 ╰──────────────────────┴─────┴────────┴─────┴────────┴─────┴────────╯
 ```
 
-In case of draws during games, players who are ex-aequo are assigned the best of their ranks. As an example, if only the 2nd and the 3rd player are equal in a 4-player game, then ranks 1, 2, 2 and 4 are assigned.
+In case of draws during games, players who are ex-aequo are assigned the best of their ranks. For example, if only the 2nd and the 3rd players are equal in a 4-player game, then ranks 1, 2, 2 and 4 are assigned.
 
 The table also shows the average score policies got at given ranks. For example, `greedy_shy` scored `502849` on average when winning during the 1000 simulated games.
-
 
 ### 🏆 A.I. Competition -- Leaderboard 🏆
 
@@ -110,5 +115,5 @@ A leaderboard might be setup later, comparing the best submitted A.I.'s.
 The game as an agnostic environment is implemented in `las_vegas/core/`. For now, please refer to the related docstring for any information.
 
 ```
-help(las_vegas.core)
+>>> help(las_vegas.core)
 ```

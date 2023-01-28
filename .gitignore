@@ -1,2 +1,5 @@
 __pycache__/
 .DS_Store
+
+# Rules file is heavy
+/rules.pdf
