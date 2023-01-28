@@ -4,14 +4,14 @@ This package revolves around _Las Vegas_, the dice boardgame edited by [Ravensbu
 
 - a CLI playing mode against humans and/or (possibly custom) agents, with customizable rules,
 - a simple confrontation tool for multiple agents.
-- an agnostic game environment, for agent implementing and/or training,
+- an agnostic game environment, for agent implementing and/or training.
 
 
 ## ⚙️ Installation ⚙️
 
 At least **Python 3.10** is required.
 
-At the moment, the package is not referenced on PyPi and installation is done via direct cloning. From the folder of your choice -- _e.g._ `workspace/` or your python `site-packages/` --, run the following commands.
+At the moment, the package is not referenced on PyPi and installation is done via direct cloning. From the folder of your choice -- _e.g._ `workspace/` --, run the following commands.
 ```
 git clone https://github.com/eliegoudout/las-vegas
 cd las-vegas/
@@ -67,7 +67,7 @@ You are then prompted to play.
 
 #### `Roll` table
 
-By default, in games with 2, 3 or 4 participants, in addition to their eight `Own` dice, players are given neutral -- or `Xtr` -- dice. In the above example, `You` rolled 10 dice (8 of your own plus 2 extra) and got, for example, one neutral `2`. In the above situation, the set of legal moves is `{1, 2, 5}`.
+By default, in games with 2, 3 or 4 participants, in addition to their 8 `Own` dice, players are given neutral -- or `Xtr` -- dice. In the above example, `You` rolled 10 dice (8 `Own` plus 2 `Xtr`) and got, for example, 1 neutral `2`. In the above situation, the set of legal moves is `{1, 2, 5}`.
 
 #### `Players` table
 
