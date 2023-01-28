@@ -4,7 +4,7 @@ This package revolves around _Las Vegas_, the dice boardgame edited by [Ravensbu
 
 - a CLI playing mode against humans and/or (possibly custom) agents, with customizable rules,
 - a simple confrontation tool for multiple agents.
-- an agnostic game environment, for agent implementing training,
+- an agnostic game environment, for agent implementing and/or training,
 
 
 ## ⚙️ Installation ⚙️
@@ -114,6 +114,6 @@ A leaderboard might be setup later, comparing the best submitted A.I.'s.
 
 The game as an agnostic environment is implemented in `las_vegas/core/`. For now, please refer to the related docstring for any information.
 
-```
+```pycon
 >>> help(las_vegas.core)
 ```
