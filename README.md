@@ -18,7 +18,7 @@ cd las-vegas/
 pip install -r requirements.txt
 ```
 
-From you Python interpreter, should should be able to `import las_vegas`.
+From your Python interpreter, you should be able to `import las_vegas`.
 ```pycon
 >>> import las_vegas
 ```
