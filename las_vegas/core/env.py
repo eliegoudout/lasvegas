@@ -18,12 +18,14 @@ from warnings import warn
 from collections import deque
 import random
 
-
 from .rules import GameRules
 
 
 class _PopableCycle:
-    """ Creates a cycle with popable last element. Used for players. """
+    """ Creates a cycle with popable previous element.
+    
+    Used for players index cycle.
+    """
     def __init__(self, iterable: Iterable, *, first: int = 0) -> None:
         """ Constructor for `_PopableCycle`.
 
@@ -96,8 +98,8 @@ class GameEnv(GameRules):
 
     New Methods:
     ------------
-        __call__: Advances the game by arbitrary number of steps or
-            until pause.
+        __call__: Advances the game by an arbitrary number of steps or
+            until forced pause.
         one_step: Advances game by one step.
         play: Gives instance a playing move.
         roll: Gives instance a roll.
@@ -175,10 +177,9 @@ class GameEnv(GameRules):
         Arguments:
         ----------
             roll_ (Roll): `roll_[0]` is the number of occurrences of
-                dice `0` to `self.num_casinos - 1` of his or her colour
-                that the player rolling owns. If `self.with_xtr`,then
-                `roll_[1]` is the same for neutral (extra) dice the
-                player has.
+                dice `0` to `self.num_casinos - 1` of his or her colour,
+                that the player rolled. If `self.with_xtr`,then
+                `roll_[1]` is the same for neutral (extra) dice.
             """
         self.roll_own = roll_[0]
         if self.with_xtr:
