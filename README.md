@@ -32,7 +32,7 @@ From your Python interpreter, you should be able to `import las_vegas`.
 
 ## 🤜 Play with friends 🤛
 
-Let's start a 3-player game: **me** vs **you** vs (a bad) **bot**:
+With `play_vs`, let's start a 3-player game: **me** vs **you** vs (a bad) **bot**:
 ```pycon
 >>> las_vegas.play_vs(3, humans=["Me", "You"])
 Round: 1/4
@@ -73,7 +73,9 @@ By default, in games with 2, 3 or 4 participants, in addition to their 8 `Own` d
 
 The players order is randomized at the beginning of the game and cycles from top to bottom.
 
-Every round, the starting player is the owner of the _first player chip_ `(*)`. At the end of a round, he or she gives it to the next player. You can see in the `Players` table that the **bot** curently has the _first player chip_ and that it is `You`'s turn to play -- marker `► xxx ◄`.
+Every round, the starting player is the owner of the _first player chip_ `(*)`. At the end of a round, he or she gives it to the next player. You can see in the `Players` table that the `bot` currently has the _first player chip_.
+
+After having played, the `bot` has 6 `Own` + 2 `Xtr` dice left and `You` will play next -- marker `► xxx ◄`.
 
 The current scores are written in the leftmost column.
 
@@ -101,7 +103,7 @@ Match in 1000 games:
 ╰──────────────────────┴─────┴────────┴─────┴────────┴─────┴────────╯
 ```
 
-In case of draws during games, players who are ex-aequo are assigned the best of their ranks. For example, if only the 2nd and the 3rd players are equal in a 4-player game, then ranks 1, 2, 2 and 4 are assigned.
+In case of draws during games, players who are ex-aequo are assigned the best of their ranks. For example, if only the 2<sup>nd</sup> and the 3<sup>rd</sup> players are equal in a 4-player game, then ranks 1, 2, 2 and 4 are assigned.
 
 The table also shows the average score policies got at given ranks. For example, `greedy_shy` scored `502849` on average when winning during the 1000 simulated games.
 
