@@ -79,14 +79,10 @@ def prompt_roll(*_, **__):
     raise NotImplementedError
 
 
-def display_game_state(
-        game: Game,
-        *,
-        show_roll: bool = False,
-        show_current_player: bool = False) -> None:
+def display_game_state(game: Game) -> None:
     """ Prints human-readable state of the game in CLI.
 
-    Example of output with `show_roll = show_current_player = True`:
+    Example of output:
     ```
     Round: 3/4
     Casinos:
@@ -119,7 +115,7 @@ def display_game_state(
     display_round(game)
     display_casinos_state(game)
     display_players_state(game)
-    if show_roll:
+    if game.roll_own is not None and not game.is_over:
         display_roll(game)
 
 

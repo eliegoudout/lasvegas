@@ -15,7 +15,7 @@ from .ui import display_game_state, prompt_play
 
 def cli(game: Game) -> Play:
     """ For human in game, prompts the user to play in CLI. """
-    display_game_state(game, show_roll=True, show_current_player=True)
+    display_game_state(game)
     return prompt_play(game)
 
 
