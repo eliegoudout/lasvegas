@@ -1,4 +1,4 @@
-""" Custom imports (optional packages. """
+""" Custom imports for optional packages. """
 
 __all__ = ["tqdm"]
 

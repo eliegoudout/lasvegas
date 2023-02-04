@@ -12,7 +12,7 @@ Exported Variables:
 
 __all__ = ['GameEnv', 'Play', 'Roll']
 
-from typing import Callable, Iterable
+from typing import Iterable
 from warnings import warn
 
 from collections import deque
@@ -23,7 +23,7 @@ from .rules import GameRules
 
 class _PopableCycle:
     """ Creates a cycle with popable previous element.
-    
+
     Used for players index cycle.
     """
     def __init__(self, iterable: Iterable, *, first: int = 0) -> None:
@@ -84,6 +84,7 @@ class GameEnv(GameRules):
             casinos.
         casinos_dice (list[list[int]]): The dice placed on each casinos.
         current_round (int): The number of the current round.
+        current_player_index (int): Index of current player.
         first_player_index (int): Index of the first player of the
             current round.
         played (Play): The move that was played.
@@ -155,7 +156,7 @@ class GameEnv(GameRules):
             step = 0
             while self.one_step() and step < steps:
                 step += 1
-            return self.is_over
+        return self.is_over
 
     def one_step(self) -> bool:
         """ Advances game by one step.
@@ -342,7 +343,7 @@ class GameEnv(GameRules):
             if self.with_xtr
             else {i for i, x in enumerate(self.roll_own) if x})
 
-    def _get_winners(self) -> list[int]:
+    def _get_winners(self) -> list[list[int]]:
         """ Computes the winners for each casino, in reverse order.
 
         Following the rules, only players with dice and with a unique number

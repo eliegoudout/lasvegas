@@ -1,6 +1,4 @@
-""" Module containing policies.
-
-A policy is a function with signature `Game -> int`, outputing plays.
+""" Module containing policies
 
 Exported Functions:
 -------------------
@@ -10,7 +8,8 @@ Exported Functions:
 
 __all__ = ['cli', 'greedy_shy']
 
-from .game import Game, Play
+from .core import Play
+from .game import Game
 from .ui import display_game_state, prompt_play
 
 

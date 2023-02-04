@@ -23,8 +23,8 @@ import random
 from .core import GameEnv, Play, Roll
 
 
-Roller = Callable[["Game"], Roll]
-Policy = Callable[["Game"], Play]
+Policy = Callable["Game", Play]
+Roller = Callable["Game", Roll]
 
 
 class Player:
@@ -34,10 +34,10 @@ class Player:
     -----------
         name (str): Name of the player.
         play_func (Policy | None): Playing function if
-            `not wait_for_play`. In this case, if `None`, `Game` will
+            `not wait_for_play`. In this case, if `None`, game will
             apply default behaviour.
         roll_func (Roller | None): Rolling function if
-            `not wait_for_roll`. In this case, if `None`, `Game` will
+            `not wait_for_roll`. In this case, if `None`, game will
             apply default behaviour.
         wait_for_play (bool): If `True` game will stop upon player's
             turn to play.
@@ -62,10 +62,10 @@ class Player:
         ----------
             name (str): Name of the player.
             play_func (Policy): Playing function if `not wait_for_play`.
-                In this case, if `None`, `Game` will apply default
+                In this case, if `None`, game will apply default
                 behaviour.
             roll_func (Roller): Rolling function if `not wait_for_roll`.
-                In this case, if `None`, `Game` will apply default
+                In this case, if `None`, game will apply default
                 behaviour.
             wait_for_play (bool): If `True` game will stop upon player's
                 turn to play.

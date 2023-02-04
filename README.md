@@ -91,7 +91,7 @@ The leftmost column of the table lists all winnable bills in the current round o
 If you want to benchmark an implemented agent against others, you can use the `confront` function. For example, we can test a `greedy_shy` agent against two uniformly random players -- represented by `None` in the code bellow -- in a 1000-games faceoff. 
 ```pycon
 >>> my_agent = las_vegas.policies.greedy_shy  # Toy example
->>> las_vegas.confront(my_agent, my_agent, None, games=1000)
+>>> las_vegas.confront(my_agent, None, None, games=1000)
 100%|███████████████████████████| 1000/1000 [00:01<00:00, 627.67it/s]
 Match in 1000 games:
 ╭──────────────────────┬─────┬────────┬─────┬────────┬─────┬────────╮
@@ -107,14 +107,51 @@ In case of draws during games, players who are ex-aequo are assigned the best of
 
 The table also shows the average score policies got at given ranks. For example, `greedy_shy` scored `502849` on average when winning during the 1000 simulated games.
 
+### 🧠 Implement your own agent 🧠
+
+An agent is defined by its _policy_, which is simply a function `Callable[Game, Play]`, where `Play = int | None`. Playing `None` is playing uniformly at random.
+
+###### Simple examples
+
+```pycon
+>>> # Imports for type hinting
+>>> from las_vegas.core import Play
+>>> from las_vegas.game import Game
+>>> 
+>>> # Plays the smallest casino number available
+>>> def smallest(game: Game) -> Play:
+...     return min(game._legal_plays())
+... 
+>>> # Plays the most `Own` dice possible
+>>> def spender(game: Game) -> Play:
+...     return max(game._legal_plays(),
+...                key=lambda d: game.roll_own[d])
+... 
+```
+```pycon
+>>> confront(smallest, spender, greedy_shy, None, games=1000)
+100%|██████████████████████████████████████████| 1000/1000 [00:01<00:00, 545.05it/s]
+Match in 1000 games:
+╭──────────────────────┬─────┬────────┬─────┬────────┬─────┬────────┬─────┬────────╮
+│ Policy               │ 1st │   with │ 2nd │   with │ 3rd │   with │ 4th │   with │
+├──────────────────────┼─────┼────────┼─────┼────────┼─────┼────────┼─────┼────────┤
+│ Policy 0: smallest   │  74 │ 396081 │ 255 │ 317804 │ 334 │ 264072 │ 337 │ 198338 │
+│ Policy 1: spender    │ 128 │ 405312 │ 295 │ 329729 │ 281 │ 259395 │ 296 │ 196655 │
+│ Policy 2: greedy_shy │ 701 │ 447461 │ 192 │ 350000 │  77 │ 286234 │  30 │ 232333 │
+│ Policy 3: None       │ 105 │ 413048 │ 264 │ 321667 │ 304 │ 263586 │ 327 │ 190061 │
+╰──────────────────────┴─────┴────────┴─────┴────────┴─────┴────────┴─────┴────────╯
+```
+
+To implement learning-based agents (_e.g._ with RL), you might first consider writing an `observation` function that extracts the `Game` state in the desired form, before passing it to a _learning environment_ built on the side. A good place to start can be [Stable Baselines3](https://stable-baselines3.readthedocs.io/en/master/).
+
 ### 🏆 A.I. Competition -- Leaderboard 🏆
 
-A leaderboard might be setup later, comparing the best submitted A.I.'s.
+A leaderboard might be setup later, comparing the best submitted A.I.'s. In _competition mode_, agents will only use `GameEnv` attributes (so they can't, for example, play what an opponent would play using their playing function).
 
 
 ## 🛠️ API 🛠️
 
-The game as an agnostic environment is implemented in `las_vegas/core/`. For now, please refer to the related docstring for any information.
+The game as an agnostic _gaming environment_ is implemented in `las_vegas/core/`. For now, please refer to the related docstring for any information.
 
 ```pycon
 >>> help(las_vegas.core)

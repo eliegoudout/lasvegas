@@ -61,7 +61,7 @@ def play_vs(
     # Play and end
     g()
     print("Game ended in the following state:")
-    display_game_state(g)
+    display_game_state(g, show_roll=False, show_current_player=False)
     if out:
         return g
 

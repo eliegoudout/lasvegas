@@ -30,7 +30,9 @@ import tabulate
 from .core import Play
 from .game import Game, Player
 
+
 Condition = Callable[[int], bool]
+
 
 tabulate.MIN_PADDING = 0
 
@@ -115,8 +117,8 @@ def display_game_state(
     ```
     """
     display_round(game)
-    display_casinos_state(game, show_current_player)
-    display_players_state(game, show_current_player)
+    display_casinos_state(game)
+    display_players_state(game)
     if show_roll:
         display_roll(game)
 
@@ -129,7 +131,7 @@ def display_round(game: Game) -> None:
     print(f"Round: {game.current_round + 1}/{game.num_rounds}")
 
 
-def display_casinos_state(game: Game, show_current_player: bool) -> None:
+def display_casinos_state(game: Game) -> None:
     """ Prints human-readable state of casinos in CLI.
 
     Example of output can be found in `display_game_state` doc.
@@ -142,7 +144,7 @@ def display_casinos_state(game: Game, show_current_player: bool) -> None:
     players_header = [''] * game.num_players
     if game.with_xtr:
         players_header.append(neutral_player_marker)
-    if show_current_player and game.current_player_index is not None:
+    if not game.is_over:
         players_header[game.current_player_index] = current_player_marker
     headers = ['Bills', 'Casinos'] + players_header
     # Table
@@ -160,7 +162,7 @@ def display_casinos_state(game: Game, show_current_player: bool) -> None:
                             colalign=('right',)))
 
 
-def display_players_state(game: Game, show_current_player: bool) -> None:
+def display_players_state(game: Game) -> None:
     """ Prints human-readable state of players in CLI.
 
     Example of output can be found in `display_game_state` doc.
@@ -174,9 +176,9 @@ def display_players_state(game: Game, show_current_player: bool) -> None:
     lines = []
     for index, bills in enumerate(game.players_bills):
         displayed_name = game.players[index].name or ukn_name
-        if index == game.first_player_index:
+        if index == game.first_player_index and not game.is_over:
             displayed_name = first_player_fmt.format(displayed_name)
-        if index == game.current_player_index:
+        if index == game.current_player_index and not game.is_over:
             displayed_name = current_player_fmt.format(displayed_name)
         line = [sum(bills), displayed_name, game.players_own_dice[index]]
         if game.with_xtr:

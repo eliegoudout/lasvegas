@@ -4,6 +4,7 @@
 - [x] Type hinting.
 	- [ ] `content.py` ndarrays? (`confront` output) (+ in `ui.py`).
 - [x] Complete docstrings
+- [ ] `setup.py` and Pypi
 - [ ] Tests
 - [ ] Add extra documentation (?)
 - [ ] Perf
@@ -18,11 +19,18 @@
 - [x] Try straightforward get_winners perf.
 - [ ] GameEnv : reset/replay on same instance?
 - [ ] More consistent asserting behaviour
-- [ ] Mor consistent backquotes.
+- [ ] More consistent backquotes.
+- [ ] More consistent `'` and `"`.
 - [x] `greedy_shy` clean code.
 - [x] `GameEnv.__call__`: optional args 'number of steps'...
 - [ ] ...and 'until step `step`'.
 - [ ] Better `opt_tqdm`.
 - [ ] Rethink `roll` structure (natural/dict vs sci)
-- [x] Remove roll empty columns
+- [x] Remove roll empty columns `ui`.
 - [ ] Roll = list of dicts? THINK
+- [ ] If game not initialized, current_player_index undef, care `ui.display_*`.
+- [ ] Complete `confront` doc with `out` example.
+- [x] Example of policy definition in `README` ?
+- [x] Difference learning env/game env in `README`!
+- [ ] Restructure (mask sections?) `README`?
+- [ ] Weird circular-but-not-really definition of policy/player/game...
