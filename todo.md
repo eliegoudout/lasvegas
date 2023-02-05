@@ -36,4 +36,4 @@
 - [ ] Weird circular-but-not-really definition of policy/player/game...
 - [ ] Add custom rules to `confront` and `play_vs`.
 - [ ] Initialize attributes with type hints.
-- [ ] Ruleset: make `type(bills)` `list | dict`? (same for other applicables)
+- [x] Ruleset: make `type(bills)` `list | dict`? (same for other applicables)
