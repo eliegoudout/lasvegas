@@ -27,8 +27,9 @@ From your Python interpreter, you should be able to `import las_vegas`.
 
 - [numpy](https://github.com/numpy/numpy)
 - [tabulate](https://github.com/astanin/python-tabulate)
-- [tqdm](https://github.com/tqdm/tqdm) (recommended for benchmarking)
+- [tqdm](https://github.com/tqdm/tqdm) (optional, recommended for benchmarking)
 
+</details>
 
 ## 🤜 Play with friends 🤛
 
@@ -109,9 +110,9 @@ The table also shows the average score policies got at given ranks. For example,
 
 ### 🧠 Implement your own agent 🧠
 
-An agent is defined by its _policy_, which is simply a function `Callable[Game, Play]`, where `Play = int | None`. Playing `None` is playing uniformly at random.
+An agent is defined by its `Policy`, which is simply a function `Callable[Game, Play]`, where `Play = int | None`. Playing `None` means playing uniformly at random.
 
-###### Simple examples
+##### Simple examples
 
 ```pycon
 >>> # Imports for type hinting
@@ -142,11 +143,13 @@ Match in 1000 games:
 ╰──────────────────────┴─────┴────────┴─────┴────────┴─────┴────────┴─────┴────────╯
 ```
 
+##### Learning
+
 To implement learning-based agents (_e.g._ with RL), you might first consider writing an `observation` function that extracts the `Game` state in the desired form, before passing it to a _learning environment_ built on the side. A good place to start can be [Stable Baselines3](https://stable-baselines3.readthedocs.io/en/master/).
 
 ### 🏆 A.I. Competition -- Leaderboard 🏆
 
-A leaderboard might be setup later, comparing the best submitted A.I.'s. In _competition mode_, agents will only use `GameEnv` attributes (so they can't, for example, play what an opponent would play using their playing function).
+A leaderboard might be setup later, comparing the best submitted A.I.'s. In _competition mode_, agents will only use `GameEnv` attributes (so they can't, for example, ask the opponents what they would play).
 
 
 ## 🛠️ API 🛠️

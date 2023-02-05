@@ -34,3 +34,6 @@
 - [x] Difference learning env/game env in `README`!
 - [ ] Restructure (mask sections?) `README`?
 - [ ] Weird circular-but-not-really definition of policy/player/game...
+- [ ] Add custom rules to `confront` and `play_vs`.
+- [ ] Initialize attributes with type hints.
+- [ ] Ruleset: make `type(bills)` `list | dict`? (same for other applicables)
