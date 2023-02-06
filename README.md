@@ -9,16 +9,26 @@ This package revolves around _Las Vegas_, the dice boardgame edited by [Ravensbu
 
 ## ⚙️ Installation ⚙️
 
-At least **Python 3.10** is required.
+At least **Python 3.10** is required. You have two options for installing `lasvegas`.
 
-At the moment, the package is not referenced on PyPi and installation is done via direct cloning. From the folder of your choice -- _e.g._ `workspace/` --, run the following commands.
+##### Install with `pip`
+
+```
+python3 -m pip install lasvegas
+```
+
+##### Install from source
+
+From the folder of your choice -- _e.g._ `~/workspace/` --, run the following commands.
 ```
 git clone https://github.com/eliegoudout/lasvegas
 cd lasvegas/
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 
-From your Python interpreter, you should be able to `import lasvegas`.
+##### Once installed
+
+From your Python interpreter, you should now be able to `import lasvegas`.
 ```pycon
 >>> import lasvegas
 ```
