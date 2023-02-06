@@ -6,6 +6,8 @@
 	- [ ] `content.py` ndarrays? (`confront` output) (+ in `ui.py`).
 - [x] Complete docstrings
 - [ ] Pypi distribution (`pyproject.toml`)
+- [ ] Complete `confront` doc with `out` example.
+- [ ] Initialize attributes with type hints.
 - [ ] Tests
 - [ ] Add extra documentation (?)
 - [ ] Perf
@@ -30,11 +32,9 @@
 - [x] Remove roll empty columns `ui`.
 - [ ] Roll = list of dicts? THINK
 - [ ] If game not initialized, current_player_index undef, care `ui.display_*`.
-- [ ] Complete `confront` doc with `out` example.
 - [x] Example of policy definition in `README` ?
 - [x] Difference learning env/game env in `README`!
 - [ ] Restructure (mask sections?) `README`?
 - [ ] Weird circular-but-not-really definition of policy/player/game...
 - [ ] Add custom rules to `confront` and `play_vs`.
-- [ ] Initialize attributes with type hints.
 - [x] Ruleset: make `type(bills)` `list | dict`? (same for other applicables)

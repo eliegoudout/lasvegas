@@ -13,14 +13,14 @@ At least **Python 3.10** is required.
 
 At the moment, the package is not referenced on PyPi and installation is done via direct cloning. From the folder of your choice -- _e.g._ `workspace/` --, run the following commands.
 ```
-git clone https://github.com/eliegoudout/las-vegas
-cd las-vegas/
+git clone https://github.com/eliegoudout/lasvegas
+cd lasvegas/
 pip install -r requirements.txt
 ```
 
-From your Python interpreter, you should be able to `import las_vegas`.
+From your Python interpreter, you should be able to `import lasvegas`.
 ```pycon
->>> import las_vegas
+>>> import lasvegas
 ```
 
 #### 🤓 Requirements 🤓
@@ -35,7 +35,7 @@ From your Python interpreter, you should be able to `import las_vegas`.
 
 With `play_vs`, let's start a 3-player game: **me** vs **you** vs (a bad) **bot**:
 ```pycon
->>> las_vegas.play_vs(3, humans=["Me", "You"])
+>>> lasvegas.play_vs(3, humans=["Me", "You"])
 Round: 1/4
 Casinos:
 ╭───────────────────┬──────────┬───┬───┬───┬───╮
@@ -91,8 +91,8 @@ The leftmost column of the table lists all winnable bills in the current round o
 
 If you want to benchmark an implemented agent against others, you can use the `confront` function. For example, we can test a `greedy_shy` agent against two uniformly random players -- represented by `None` in the code bellow -- in a 1000-games faceoff. 
 ```pycon
->>> my_agent = las_vegas.policies.greedy_shy  # Toy example
->>> las_vegas.confront(my_agent, None, None, games=1000)
+>>> my_agent = lasvegas.policies.greedy_shy  # Toy example
+>>> lasvegas.confront(my_agent, None, None, games=1000)
 100%|███████████████████████████| 1000/1000 [00:01<00:00, 627.67it/s]
 Match in 1000 games:
 ╭──────────────────────┬─────┬────────┬─────┬────────┬─────┬────────╮
@@ -116,8 +116,8 @@ An agent is defined by its `Policy`, which is simply a function `Callable[Game, 
 
 ```pycon
 >>> # Imports for type hinting
->>> from las_vegas.core import Play
->>> from las_vegas.game import Game
+>>> from lasvegas.core import Play
+>>> from lasvegas.game import Game
 >>> 
 >>> # Plays the smallest casino number available
 >>> def smallest(game: Game) -> Play:
@@ -154,8 +154,8 @@ A leaderboard might be setup later, comparing the best submitted A.I.'s. In _com
 
 ## 🛠️ API 🛠️
 
-The game as an agnostic _gaming environment_ is implemented in `las_vegas/core/`. For now, please refer to the related docstring for any information.
+The game as an agnostic _gaming environment_ is implemented in `lasvegas/core/`. For now, please refer to the related docstring for any information.
 
 ```pycon
->>> help(las_vegas.core)
+>>> help(lasvegas.core)
 ```
