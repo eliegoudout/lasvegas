@@ -37,7 +37,7 @@ From your Python interpreter, you should now be able to `import lasvegas`.
 
 - [numpy](https://github.com/numpy/numpy)
 - [tabulate](https://github.com/astanin/python-tabulate)
-- [tqdm](https://github.com/tqdm/tqdm) (optional, recommended for benchmarking)
+- [tqdm](https://github.com/tqdm/tqdm)
 
 </details>
 

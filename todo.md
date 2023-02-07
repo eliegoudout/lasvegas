@@ -5,7 +5,7 @@
 	- [ ] Fix `Callable`s ([discussion](https://github.com/python/typing/discussions/1344)).
 	- [ ] `content.py` ndarrays? (`confront` output) (+ in `ui.py`).
 - [x] Complete docstrings
-- [ ] Pypi distribution (`pyproject.toml`)
+- [x] Pypi distribution (`pyproject.toml`)
 - [ ] Complete `confront` doc with `out` example.
 - [ ] Initialize attributes with type hints.
 - [ ] Tests

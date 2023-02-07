@@ -8,9 +8,9 @@ Exported functions:
 
 __all__ = ['confront', 'play_vs']
 
+from tqdm import tqdm
 import numpy as np
 
-from ._custom_imports import tqdm
 from .game import Game, Player, Policy
 from .policies import cli
 from .ui import display_confront, display_game_state
@@ -79,7 +79,7 @@ def confront(
 
     Example of console output:
     ```
-    >>> confront(None, las_vegas.policies.greedy_shy)
+    >>> confront(None, lasvegas.policies.greedy_shy)
     Match in 100 games:
     ╭──────────────────────┬─────┬────────┬─────┬────────╮
     │ Policy               │ 1st │   with │ 2nd │   with │
