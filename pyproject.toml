@@ -16,12 +16,12 @@ dynamic = ["version"]
 description = "Las Vegas boardgame – API"
 readme = "README.md"
 authors = [{name="Élie Goudout", email="eliegoudout@hotmail.com"}]
-requires-python = ">=3.10"
+requires-python = "~=3.10"  # PEP440 != poetry? '^' vs '~'
 license = {file="LICENSE"}
 dependencies = [
-  "numpy",
-  "tabulate",
-  "tqdm",
+  "numpy ~= 1.22",
+  "tabulate ~= 0.9",
+  "tqdm ~= 4.63",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
