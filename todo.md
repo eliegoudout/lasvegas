@@ -6,6 +6,7 @@
 	- [ ] `content.py` ndarrays? (`confront` output) (+ in `ui.py`).
 - [x] Complete docstrings
 - [x] Pypi distribution (`pyproject.toml`)
+	- [x] Remove `requirements.txt`
 - [ ] Complete `confront` doc with `out` example.
 - [ ] Initialize attributes with type hints.
 - [ ] Tests

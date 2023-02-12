@@ -23,7 +23,7 @@ From the folder of your choice -- _e.g._ `~/workspace/` --, run the following co
 ```
 git clone https://github.com/eliegoudout/lasvegas
 cd lasvegas/
-python3 -m pip install -r requirements.txt
+python3 -m pip install .
 ```
 
 ##### Once installed

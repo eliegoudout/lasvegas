@@ -1,8 +1,12 @@
 ## Unreleased
 
-##### 0.1.3
+##### 0.1.4
 
 ## Released
+
+##### 0.1.3 – February 12, 2023
+
+- Removed redundant `requirements.txt`.
 
 ##### 0.1.2 – February 7, 2023
 
