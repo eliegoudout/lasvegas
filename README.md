@@ -169,3 +169,24 @@ The game as an agnostic _gaming environment_ is implemented in `lasvegas/core/`.
 ```pycon
 >>> help(lasvegas.core)
 ```
+
+## 🔧 Performance 🔧
+
+From sources, in the root folder, you can measure the time it takes for games to be played using the small embeded `/perf` package:
+
+- From CLI: `python3 -m perf [<num_games>]` for default uniformly random policy,
+- From python interpreter: by importing `perf` as a package and using the `main` function. This allows you to specify the tested policy and custom ruleset with `perf.main(my_policy, num_games, **ruleset)`.
+
+Output should look like this:
+```pycon
+Game time for policy 'None' over 1000 games:
+╭─────────────┬─────────────┬─────────────┬─────────────┬────────────╮
+│ Num players │        Mean │         Std │         Min │        Max │
+├─────────────┼─────────────┼─────────────┼─────────────┼────────────┤
+│           2 │ 0.000736925 │ 0.00010832  │ 0.000586601 │ 0.00153355 │
+│           3 │ 0.000877708 │ 0.000115358 │ 0.00073084  │ 0.00208572 │
+│           4 │ 0.00109703  │ 9.61707e-05 │ 0.000936839 │ 0.00192353 │
+│           5 │ 0.00100278  │ 8.36639e-05 │ 0.00084511  │ 0.00177113 │
+╰─────────────┴─────────────┴─────────────┴─────────────┴────────────╯
+```
+_**Note**: Dependencies should be installed._

@@ -38,7 +38,7 @@ class GameRules:
     """
     # Just for info. 1-player version excluded for now.
     rulebook_min_players: int = 2
-    rulebook_max_player: int = 5
+    rulebook_max_players: int = 5
 
     def __init__(
             self,

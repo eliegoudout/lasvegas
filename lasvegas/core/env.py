@@ -12,7 +12,7 @@ Exported Variables:
 
 __all__ = ['GameEnv', 'Play', 'Roll']
 
-from typing import Iterable
+from typing import Any, Iterable
 from warnings import warn
 
 from collections import deque
@@ -124,7 +124,7 @@ class GameEnv(GameRules):
         _reset_roll_and_play
         _update_survival
     """
-    def __init__(self, **ruleset) -> None:
+    def __init__(self, **ruleset: Any) -> None:
         """ Constructor for `GameEnv`.
 
         Arguments:

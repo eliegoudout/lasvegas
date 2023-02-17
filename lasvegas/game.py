@@ -15,7 +15,7 @@ from __future__ import annotations
 
 __all__ = ['Game', 'Player', 'Policy', 'Roller']
 
-from typing import Callable
+from typing import Any, Callable
 from warnings import warn
 
 import random
@@ -156,7 +156,7 @@ class Game(GameEnv):
             self,
             players: list[Player] = [],
             /,
-            **ruleset) -> None:
+            **ruleset: Any) -> None:
         """ Constructor for Game
 
         If not provided, the number of players is set to `len(players)`.

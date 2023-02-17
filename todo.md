@@ -11,7 +11,7 @@
 - [ ] Initialize attributes with type hints.
 - [ ] Tests
 - [ ] Add extra documentation (?)
-- [ ] Perf
+- [x] Perf
 - [ ] Competition mode (w/ copy of `GameEnv`)
 - [x] players own/xtr dice property/setter/replace in code
 - [x] Think about utilities, in or out of modules? `legal_plays` a method? Could be good.
