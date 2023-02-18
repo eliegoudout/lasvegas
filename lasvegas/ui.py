@@ -190,18 +190,19 @@ def display_roll(game: Game) -> None:
 
     Example of output can be found in `display_game_state` doc.
     """
-    # Logic
-    rolls = [game.roll_own] + ([game.roll_xtr] if game.with_xtr else [])
-    no_dice = set.intersection(*[{i for i, v in enumerate(roll) if v == 0}
-                                 for roll in rolls])
+    legal_plays = game._legal_plays()
+    rolls = (
+        [game.roll_own, game.roll_xtr]
+        if game.with_xtr 
+        else [game.roll_own]
+    )
     lines = []
     for title, roll in zip(['Own', 'Xtr'], rolls):
         line = [title]
         # Loop of dice values
-        for value, quantity in enumerate(roll):
-            if value not in no_dice:
-                value_dice_str = ' '.join([str(value)] * quantity)
-                line.append(value_dice_str)
+        for die in legal_plays:
+            die_str = ' '.join([str(die)] * roll.get(die, 0))
+            line.append(die_str)
         lines.append(line)
     # Print
     print("Roll:")

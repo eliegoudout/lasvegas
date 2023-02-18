@@ -31,7 +31,7 @@
 - [ ] Better `opt_tqdm`.
 - [ ] Rethink `roll` structure (natural/dict vs sci)
 - [x] Remove roll empty columns `ui`.
-- [ ] Roll = list of dicts? THINK
+- [x] Roll = dicts
 - [ ] If game not initialized, current_player_index undef, care `ui.display_*`.
 - [x] Example of policy definition in `README` ?
 - [x] Difference learning env/game env in `README`!

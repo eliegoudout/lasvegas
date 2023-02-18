@@ -136,12 +136,12 @@ An agent is defined by its `Policy`, which is simply a function `Callable[Game, 
 >>> # Plays the most `Own` dice possible
 >>> def spender(game: Game) -> Play:
 ...     return max(game._legal_plays(),
-...                key=lambda d: game.roll_own[d])
+...                key=lambda d: game.roll_own.get(d, -1))
 ... 
 ```
 ```pycon
->>> confront(smallest, spender, greedy_shy, None, games=1000)
-100%|██████████████████████████████████████████| 1000/1000 [00:01<00:00, 545.05it/s]
+>>> lasvegas.confront(smallest, spender, lasvegas.policies.greedy_shy, None, games=1000)
+100%|██████████████████████████████████████████████| 1000/1000 [00:01<00:00, 545.05it/s]
 Match in 1000 games:
 ╭──────────────────────┬─────┬────────┬─────┬────────┬─────┬────────┬─────┬────────╮
 │ Policy               │ 1st │   with │ 2nd │   with │ 3rd │   with │ 4th │   with │
