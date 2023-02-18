@@ -3,16 +3,17 @@
 ##### 0.1.4
 
 - `perf` tool
+- Rolls as `dict[int, int]`
 
 ## Released
 
 ##### 0.1.3 – February 12, 2023
 
-- Removed redundant `requirements.txt`.
+- Removed redundant `requirements.txt`
 
 ##### 0.1.2 – February 7, 2023
 
-- `tqdm` required (simpler this way, and pretty standard anyways).
+- `tqdm` required (simpler this way, and pretty standard anyways)
 - Fixed metadata for Pypi
 - Bump version number because conflict otherwise
 
