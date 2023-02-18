@@ -50,7 +50,7 @@ class _PopableCycle:
 
 
 Play = int | None
-Roll = list[list[int]]
+Roll = list[dict[int, int]]
 
 
 class GameEnv(GameRules):
@@ -94,8 +94,8 @@ class GameEnv(GameRules):
         players_own_dice (int): Number of `Own` dice of players.
         players_xtr_dice (int): Number of `Xtr` dice of players.
             Attribute is never initialized if not `self.with_xtr`!
-        roll_own (list[int] | None): Rolled `Own` dice.
-        roll_xtr (list[int] | None): Rolled `Xtr` dice.
+        roll_own (dict[int, int] | None): Rolled `Own` dice.
+        roll_xtr (dict[int, int] | None): Rolled `Xtr` dice.
 
     New Methods:
     ------------
@@ -166,7 +166,7 @@ class GameEnv(GameRules):
             Value of `self.next_step is not None` after the step.
         """
         if self.next_step is None:
-            warn("Game is already over!" if self.is_over else "No next step!",
+            warn("Game is already over!" if self.is_over else "No next step!", 
                  stacklevel=2)
         else:
             self.next_step()
@@ -177,10 +177,10 @@ class GameEnv(GameRules):
 
         Arguments:
         ----------
-            roll_ (Roll): `roll_[0]` is the number of occurrences of
-                dice `0` to `self.num_casinos - 1` of his or her colour,
-                that the player rolled. If `self.with_xtr`,then
-                `roll_[1]` is the same for neutral (extra) dice.
+            roll_ (Roll): `roll_[0]` is the occurence dict of dice of
+                his or her colour, that the player rolled. If
+                `self.with_xtr`,then `roll_[1]` is the same for neutral
+                (extra) dice.
             """
         self.roll_own = roll_[0]
         if self.with_xtr:
@@ -317,9 +317,12 @@ class GameEnv(GameRules):
         Hypothesis: Roll and play have are properly set.
         """
         casino_dice = self.casinos_dice[self.played]
-        self.curr_own_dice -= self.roll_own[self.played]
-        casino_dice[self.current_player_index] += self.roll_own[self.played]
-        if self.with_xtr:
+        # Own
+        if self.played in self.roll_own:
+            self.curr_own_dice -= self.roll_own[self.played]
+            casino_dice[self.current_player_index] += self.roll_own[self.played]
+        # Xtr
+        if self.with_xtr and self.played in self.roll_xtr:
             self.curr_xtr_dice -= self.roll_xtr[self.played]
             casino_dice[self.num_players] += self.roll_xtr[self.played]
 
@@ -338,10 +341,9 @@ class GameEnv(GameRules):
 
         Careful, no sanitation of the roll.
         """
-        return (
-            {i for i, x in enumerate(self.roll_own) if (x or self.roll_xtr[i])}
-            if self.with_xtr
-            else {i for i, x in enumerate(self.roll_own) if x})
+        return (self.roll_xtr.keys() | self.roll_own.keys()
+                if self.with_xtr
+                else set(self.roll_own.keys()))
 
     def _get_winners(self) -> list[list[int]]:
         """ Computes the winners for each casino, in reverse order.

@@ -81,8 +81,6 @@ def run_ruleset(
     for i in tqdm(range(games), desc=f"{num_players} players", leave=False):
         # Start
         start = perf_counter()
-        import time
-        time.sleep(.001)
         Game(players)()
         # End
         end = perf_counter()

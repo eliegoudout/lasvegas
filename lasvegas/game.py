@@ -243,15 +243,17 @@ class Game(GameEnv):
         N = self.num_casinos
         roll = []
         # Own dice
-        roll_own = [0] * N
+        roll_own = dict()
         for _ in range(self.curr_own_dice):
-            roll_own[int(N * random.random())] += 1
+            rolled = int(N * random.random())
+            roll_own[rolled] = roll_own.get(rolled, 0) + 1
         roll.append(roll_own)
         # Xtr dice
         if self.with_xtr:
-            roll_xtr = [0] * self.num_casinos
+            roll_xtr = dict()
             for _ in range(self.curr_xtr_dice):
-                roll_xtr[int(N * random.random())] += 1
+                rolled = int(N * random.random())
+                roll_xtr[rolled] = roll_xtr.get(rolled, 0) + 1
             roll.append(roll_xtr)
         # Return
         return roll
