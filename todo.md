@@ -2,7 +2,7 @@
 - [x] requirements
 - [x] README
 - [x] Type hinting.
-	- [ ] Fix `Callable`s ([discussion](https://github.com/python/typing/discussions/1344)).
+	- [x] Fix `Callable`s ([discussion](https://github.com/python/typing/discussions/1344)).
 	- [ ] `content.py` ndarrays? (`confront` output) (+ in `ui.py`).
 - [x] Complete docstrings
 - [x] Pypi distribution (`pyproject.toml`)
