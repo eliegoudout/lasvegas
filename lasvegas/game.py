@@ -23,8 +23,8 @@ import random
 from .core import GameEnv, Play, Roll
 
 
-Policy = Callable["Game", Play]
-Roller = Callable["Game", Roll]
+Policy = Callable[["Game"], Play]
+Roller = Callable[["Game"], Roll]
 
 
 class Player:

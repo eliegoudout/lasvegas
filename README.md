@@ -120,7 +120,7 @@ The table also shows the average score policies got at given ranks. For example,
 
 ### 🧠 Implement your own agent 🧠
 
-An agent is defined by its `Policy`, which is simply a function `Callable[Game, Play]`, where `Play = int | None`. Playing `None` means playing uniformly at random.
+An agent is defined by its `Policy`, which is simply a function `Callable[[Game], Play]`, where `Play = int | None`. Playing `None` means playing uniformly at random.
 
 ##### Simple examples
 
