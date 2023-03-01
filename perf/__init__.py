@@ -10,6 +10,7 @@ __all__ = ['main']
 from typing import Any, Iterable
 
 from time import perf_counter
+from math import log10, ceil
 from tqdm import tqdm
 import numpy as np
 import tabulate
@@ -122,7 +123,39 @@ def display_results(
     print(tabulate.tabulate(lines, headers, "rounded_outline"))
 
 
-# TODO (issue #7)
+def most_significant_digits(t: float) -> float:
+    """ Returns the 3 most significant digits from a float """
+    digit_count = 3
+    magnitude = ceil(log10(t))
+    digits = t // 10**(magnitude - digit_count)
+    
+    if magnitude % digit_count:
+        magnitude_shift = digit_count - magnitude % digit_count
+        digits /= 10**magnitude_shift
+
+    return digits
+    
+def time_unit(t: float) -> str:
+    """ Determines the unit of time """
+    if t < 995e-9:
+        unit = "ns"
+    elif t < 995e-6:
+        unit = "us"
+    elif t < 995e-3:
+        unit = "ms"
+    else:
+        unit = "ss"
+    
+    return unit
+
 def format_time(t: float) -> str:
     """ Nicer format to read a (short) `float` duration in seconds. """
-    return str(t)  # TO DO (issue #7)
+    if t < 1e-9:
+        return f"{t * 1e9:.2f}ns"
+        
+    if t >= 1000:
+        return f"{int(t)}ss"
+
+    digits = most_significant_digits(t)
+    unit = time_unit(t)
+    return f"{digits:g}{unit}"
