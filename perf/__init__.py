@@ -21,6 +21,7 @@ from lasvegas.game import Player, Policy, Game
 
 def main(policy: Policy | None = None,
          games: int = 1000,
+         out: bool = False,
          /,
          **ruleset: Any) -> None:
     """ Runs multiple games and times execution before displaying stats.
@@ -30,6 +31,7 @@ def main(policy: Policy | None = None,
         policy (Policy | None): Policy used as all players in the game.
             If `None`, `Game` will use default -- uniformly random.
         games (int): Number of games to run and gather stats over.
+        out (bool): If true return results as a numpy ndarray
         **ruleset (Any): Ruleset to use for performance measure. If
             `num_players` is not specified, all values from
             `GameRules.rulebook_min_players` to
@@ -43,6 +45,9 @@ def main(policy: Policy | None = None,
     results = [
         run_ruleset(policy, games, num_players=num_players, **ruleset)
         for num_players in all_num_players]
+    
+    if out: return np.array(results)
+
     print(f"Game time for policy '{policy and policy.__name__}' "
           f"over {games} games:")
     display_results(all_num_players, results)
@@ -124,7 +129,12 @@ def display_results(
 
 
 def most_significant_digits(t: float) -> float:
-    """ Returns the 3 most significant digits from a float """
+    """ Returns the 3 most significant digits from a float.
+
+    Arguments:
+    ----------
+        t (float): Time in seconds
+    """
     digit_count = 3
     magnitude = ceil(log10(t))
     digits = t // 10**(magnitude - digit_count)
@@ -136,7 +146,12 @@ def most_significant_digits(t: float) -> float:
     return digits
     
 def time_unit(t: float) -> str:
-    """ Determines the unit of time """
+    """ Determines the unit of time.
+    
+    Arguments:
+    ----------
+        t (float): Time in seconds
+    """
     if t < 995e-9:
         unit = "ns"
     elif t < 995e-6:
@@ -149,8 +164,12 @@ def time_unit(t: float) -> str:
     return unit
 
 def format_time(t: float) -> str:
-    """ Nicer format to read a (short) `float` duration in seconds. """
-
+    """ Nicer format to read a (short) `float` duration in seconds.
+    
+    Arguments:
+    ----------
+        t (float): Time in seconds
+    """
     assert t <= 999
 
     if t < 1e-9:
