@@ -150,11 +150,11 @@ def time_unit(t: float) -> str:
 
 def format_time(t: float) -> str:
     """ Nicer format to read a (short) `float` duration in seconds. """
+
+    assert t <= 999
+
     if t < 1e-9:
         return f"{t * 1e9:.2f}ns"
-        
-    if t >= 1000:
-        return f"{int(t)}ss"
 
     digits = most_significant_digits(t)
     unit = time_unit(t)
