@@ -166,7 +166,7 @@ class GameEnv(GameRules):
             Value of `self.next_step is not None` after the step.
         """
         if self.next_step is None:
-            warn("Game is already over!" if self.is_over else "No next step!", 
+            warn("Game is already over!" if self.is_over else "No next step!",
                  stacklevel=2)
         else:
             self.next_step()
@@ -316,15 +316,16 @@ class GameEnv(GameRules):
 
         Hypothesis: Roll and play have are properly set.
         """
-        casino_dice = self.casinos_dice[self.played]
+        played = self.played
+        casino_dice = self.casinos_dice[played]
         # Own
-        if self.played in self.roll_own:
-            self.curr_own_dice -= self.roll_own[self.played]
-            casino_dice[self.current_player_index] += self.roll_own[self.played]
+        if played in self.roll_own:
+            self.curr_own_dice -= self.roll_own[played]
+            casino_dice[self.current_player_index] += self.roll_own[played]
         # Xtr
-        if self.with_xtr and self.played in self.roll_xtr:
-            self.curr_xtr_dice -= self.roll_xtr[self.played]
-            casino_dice[self.num_players] += self.roll_xtr[self.played]
+        if self.with_xtr and played in self.roll_xtr:
+            self.curr_xtr_dice -= self.roll_xtr[played]
+            casino_dice[self.num_players] += self.roll_xtr[played]
 
     def _update_survival(self) -> None:
         """ Removes current player that doesn't have any dice left. """

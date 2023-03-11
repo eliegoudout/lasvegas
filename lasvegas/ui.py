@@ -193,7 +193,7 @@ def display_roll(game: Game) -> None:
     legal_plays = game._legal_plays()
     rolls = (
         [game.roll_own, game.roll_xtr]
-        if game.with_xtr 
+        if game.with_xtr
         else [game.roll_own]
     )
     lines = []
