@@ -9,6 +9,7 @@ __all__ = ['main']
 
 from typing import Any, Iterable
 
+from math import ceil, log10
 from time import perf_counter
 from tqdm import tqdm
 import numpy as np
@@ -105,14 +106,14 @@ def display_results(
     Example of output:
     ```
     Game time for policy 'None' over 1000 games:
-    ╭─────────────┬─────────────┬─────────────┬─────────────┬────────────╮
-    │ Num players │        Mean │         Std │         Min │        Max │
-    ├─────────────┼─────────────┼─────────────┼─────────────┼────────────┤
-    │           2 │ 0.000711025 │ 9.06734e-05 │ 0.000578454 │ 0.00165545 │
-    │           3 │ 0.000890178 │ 0.000170405 │ 0.000722805 │ 0.0026636  │
-    │           4 │ 0.00108281  │ 9.40196e-05 │ 0.000930123 │ 0.0018021  │
-    │           5 │ 0.000998544 │ 9.2507e-05  │ 0.000860526 │ 0.00184985 │
-    ╰─────────────┴─────────────┴─────────────┴─────────────┴────────────╯
+    ╭─────────────┬──────────┬──────────┬──────────┬──────────╮
+    │ Num players │ Mean     │ Std      │ Min      │ Max      │
+    ├─────────────┼──────────┼──────────┼──────────┼──────────┤
+    │           2 │ 674.6 us │ 112.9 us │ 533.4 us │ 1.566 ms │
+    │           3 │ 776.3 us │ 64.76 us │ 670.5 us │ 1.223 ms │
+    │           4 │ 1.007 ms │ 152.7 us │ 841.8 us │ 2.440 ms │
+    │           5 │ 918.3 us │ 75.86 us │ 809.7 us │ 1.457 ms │
+    ╰─────────────┴──────────┴──────────┴──────────┴──────────╯
     ```
     """
     headers = ["Num players", "Mean", "Std", "Min", "Max"]
@@ -122,7 +123,72 @@ def display_results(
     print(tabulate.tabulate(lines, headers, "rounded_outline"))
 
 
-# TODO (issue #7)
-def format_time(t: float) -> str:
-    """ Nicer format to read a (short) `float` duration in seconds. """
-    return str(t)  # TO DO (issue #7)
+def format_time(duration: float, num_digits: int = 4) -> str:
+    """ Formats a `float` duration in seconds to a readable `str`.
+
+    A few examples with `num_digits = 4` are given below, showcasing
+    some special cases.
+    ╭───────────────┬────────────────┬───────────────────────────────────────────╮
+    │   Duration    │     Result     │                  Comment                  │
+    ├───────────────┼────────────────┼───────────────────────────────────────────┤
+    │      1.5      │    1.500 ss    │ Significant 0's added                     │
+    │      0.56789  │    567.9 ms    │ Last digit is rounded...                  │
+    │      0.99995  │    1.000 ss    │ ...which can lead to precision loss       │
+    │      0.12345  │    123.4 ms    │ Rounds half to even (python built-in)     │
+    │   1234        │    1234. ss    │ Point is added for constant witdh         │
+    │  12345        │    12345 ss    │ One more digit for longer durations       │
+    │ 123456        │ AssertionError │ Exceeded max duration                     │
+    │     -1        │ AssertionError │ Negative duration                         │
+    │      0        │    0.000 as    │ Shorter durations are in smallest unit... │
+    │      5.67e-20 │    0.057 as    │ ...and show with less precision           │
+    ╰───────────────┴────────────────┴───────────────────────────────────────────╯
+
+    Implementation heavily relies on following facts:
+        - Consecutive units have constant ratio of `10 ** 3`,
+        - Highest unit is the unit of `duration`'s encoding.
+
+    Arguments:
+    ----------
+        duration (float): Expressed in seconds, duration to format. Must
+            satisfy `0 <= duration < 10 ** (num_digits + 1) - .5`.
+        num_digits (int): Number of significant digits to display.
+            Larger durations can have one more and shorter durations
+            less -- see examples above.
+
+    Returns:
+    --------
+        (str): Formated duration -- _e.g._ `'567.9 ms'`.
+
+    Raises:
+    -------
+        `AssertionError` if either `num_digits < 3` or
+            `not 0 <= duration < 10 ** (num_digits + 1) - .5`
+    """
+    units = ['ss', 'ms', 'us', 'ns', 'ps', 'fs', 'as']
+    max_pow = 3 * (len(units) - 1)
+    n = num_digits
+    assert n >= 3
+    assert 0 <= duration < 10 ** (n+1) - .5, "Duration out of bounds."
+    # Special case 0
+    if duration == 0:
+        return f"{0:.{n-1}f} " + units[-1]
+    # Retrieve left shift for significant part
+    left_shift = ceil(- log10(duration)) + n - 1
+    significant = round(duration * 10 ** left_shift)
+    # Special case `0.0099996` -> `'10.00ms'`
+    if significant == 10 ** n:
+        significant //= 10
+        left_shift -= 1
+    # If `duration` is barely too big: remove floating point
+    if left_shift == -1:
+        return f"{round(duration)} " + units[0]
+    # Nominal case
+    elif left_shift < max_pow + n:
+        unit_index = max(0, 1 + (left_shift - n) // 3)
+        y = significant * 10 ** (3 * unit_index - left_shift)
+        n_left = int(log10(y) + 1)
+        unit = units[unit_index]
+        return f"{y:.{max(0, n-n_left)}f}" + ('. ' if n == n_left else ' ') + unit
+    # If so small that smallest unit loses precision
+    else:
+        return f"{duration * 10 ** max_pow:.{n-1}f} " + units[-1]
