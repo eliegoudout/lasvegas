@@ -57,7 +57,7 @@ class GameEnv(GameRules):
     """ Class with core mechanics of a game, external to players.
 
     Logic is the following: playing a game is following a succession of
-    steps. After one step was done (see `one_step`, `next_step` is
+    steps. After one step was done -- see `one_step` --, `next_step` is
     updated. It is set to `None` if further information is needed, at
     which point `resume` will stop and `one_step` won't advance.
 

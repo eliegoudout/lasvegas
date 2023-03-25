@@ -4,5 +4,5 @@ __pycache__/
 # Build
 dist/
 
-# Rules file is heavy
-rules.pdf
+# Dev drafts/tests/tools
+dev_tools/
