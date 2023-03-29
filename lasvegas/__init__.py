@@ -8,6 +8,6 @@ Exported Functions:
 
 __all__ = ["confront", "play_vs"]
 __author__ = "Élie Goudout"
-__version__ = "0.1.4"
+__version__ = "0.1.5dev"
 
 from .interactive import confront, play_vs
