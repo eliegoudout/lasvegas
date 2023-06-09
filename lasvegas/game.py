@@ -1,271 +1,176 @@
-""" Module adding player logic to the core `GameEnv`.
+""" Module adding player logic to the core `GameEnv` for simulations.
 
 Exported Classes:
 -----------------
-    Game: Adds player layer to core mechanics.
-    Player: Contains player's name and behaviour.
-
-Exported Variables:
--------------------
-    Policy (type): Type of a policy (playing function).
-    Roller (type): Type of a roller (rolling function).
+    Game: Class to run games with player instances.
 """
 
-from __future__ import annotations
 
-__all__ = ['Game', 'Player', 'Policy', 'Roller']
+__all__ = ['Game']
 
-from typing import Any, Callable
-from warnings import warn
+from copy import deepcopy
+from functools import cached_property
+from typing import Any
+import traceback
 
-import random
-
-from .core import GameEnv, Play, Roll
-
-
-Policy = Callable[["Game"], Play]
-Roller = Callable[["Game"], Roll]
+from .act import BasePlayer, Player, random_play, random_roll
+from .core import GameEnv
 
 
-class Player:
-    """ Instances represent players, with rolling and playing behaviour.
+class Game:
+    """ Class to run games with player instances.
+
+    Class Attributes:
+    -----------------
+        default_policy (Policy): Used when player behaviour is undefined
+            or inappropriate in "safe" mode.
+        default_rollicy (Rollicy): Used when player behaviour is
+            undefined or inappropriate in "safe" mode.
 
     Attributes:
     -----------
-        name (str): Name of the player.
-        play_func (Policy | None): Playing function if
-            `not wait_for_play`. In this case, if `None`, game will
-            apply default behaviour.
-        roll_func (Roller | None): Rolling function if
-            `not wait_for_roll`. In this case, if `None`, game will
-            apply default behaviour.
-        wait_for_play (bool): If `True` game will stop upon player's
-            turn to play.
-        wait_for_roll (bool): If `True` game will stop upon player's
-            turn to roll.
+        env (GameEnv): The environment playing the game.
+        num_given_players (int): Number of players passed at
+            instanciation. Clipped if too many compared to
+            `num_players`.
+        players (list[Player]): List of players of the game. Start of
+            the list contains players passed at instanciation.
+        safe (bool): When `True`, players are only passed a copy of
+            the environment and players name. Slows down game execution.
+            Additional roll and play sanity checks are also made.
+
+    Cached Properties:
+    ------------------
+        players_name [get] (list[str]): Explicit.
 
     Methods:
     --------
-        __call__
-    """
-    def __init__(
-            self,
-            *,
-            wait_for_roll: bool = False,
-            roll_func: Roller | None = None,
-            wait_for_play: bool = False,
-            play_func: Policy | None = None,
-            name: str | None = None) -> None:
-        """ Constructs a Player instance.
+        __init__: Constructor for `Game`.
+        run: Plays a game from start to finish.
 
-        Arguments:
-        ----------
-            name (str): Name of the player.
-            play_func (Policy): Playing function if `not wait_for_play`.
-                In this case, if `None`, game will apply default
-                behaviour.
-            roll_func (Roller): Rolling function if `not wait_for_roll`.
-                In this case, if `None`, game will apply default
-                behaviour.
-            wait_for_play (bool): If `True` game will stop upon player's
-                turn to play.
-            wait_for_roll (bool): If `True` game will stop upon player's
-                turn to roll.
-        """
-        # Roll
-        self.wait_for_roll = wait_for_roll
-        if roll_func is not None and wait_for_roll:
-            warn(f"Player {name}: Since `wait_for_roll` is True, `roll_func` "
-                 f"is ignored.")
-            roll_func = None
-        self.roll_func = roll_func
-        # Play
-        self.wait_for_play = wait_for_play
-        if play_func is not None and wait_for_play:
-            warn(f"Player {name}: Since `wait_for_play` is True, `play_func` "
-                 f"is ignored.")
-            play_func = None
-        self.play_func = play_func
-        # Name
-        self.name = name
-
-    def __call__(self, action: str, game: Game) -> Play | Roll:
-        """ Returns a play or a roll given `game`'s state.
-
-        Arguments:
-        ----------
-            action (str): The action to take, from `{'play', 'roll'}`.
-            game (Game): The game Player instance is playing in.
-
-        Returns:
-        --------
-            The player's `action`.
-        """
-        if action == 'roll':
-            if self.roll_func is not None:
-                return self.roll_func(game)
-            else:
-                raise ValueError(f"Rolling behaviour of player '{self.name}' "
-                                 f"is not specified!")
-        elif action == 'play':
-            if self.play_func is not None:
-                return self.play_func(game)
-            else:
-                raise ValueError(f"Playing behaviour of player '{self.name}' "
-                                 f"is not specified!")
-        else:
-            raise ValueError(f"Parameter `action` should be 'roll' or 'play' "
-                             f"(got {action}.)")
-
-
-class Game(GameEnv):
-    """ Uses `Player` class to create playable games from `GameEnv`.
-
-    New Attributes:
-    ---------------
-        given_players (list[Player]): Players explicitly provided upon
-            instance creation.
-        players (list[Player]): All players in the game (including
-            potentially added bots)
-        players_permutation (list[int]): Players are shuffled at the
-            beginning according to this permutation.
-
-    New Properties:
-    ---------------
-        [get] current_player (Player): Returns the currently playing
-            `Player`.
-
-    New internal Methods:
-    ---------------------
-        _assign_players
-        _random_play
-        _random_roll
-        _player_play
-        _player_roll
-
-    Modified Methods:
+    Internal Methods:
     -----------------
-        play
-        roll
-
-    Modified Internal Methods:
-    --------------------------
-        _initialize_turn
+        _add_missing_players
     """
+    default_policy = random_play
+    default_rollicy = random_roll
+
     def __init__(
             self,
             players: list[Player] = [],
             /,
-            **ruleset: Any) -> None:
-        """ Constructor for Game
-
-        If not provided, the number of players is set to `len(players)`.
+            *,
+            safe: bool = False,
+            **envargs: Any) -> None:
+        """ Constructor for `Game`.
 
         Arguments:
         ----------
-            players (list[Player]): Players for the game. Order doesn't
-                matter since they're shuffled.
-            **ruleset: See `GameEnv`. If `num_players` is greater than
-                `len(players)`, bots are added.
+            players (list[Player]): List of players that will
+                participate in the game. The number of players is
+                determined by the length of `players`, unless specified
+                in `gameargs`. The list is truncated or extended (with
+                Bots) if needed. Defaults to `[]`.
+            safe (bool): When `True`, players are only passed a copy of
+                the environment and players name. Slows down game
+                execution. Additional roll and play sanity checks are
+                also made. Defaults to `False`.
+            **envargs: Passed to `GameEnv` after `num_players`
+                processing.
 
         """
-        num_players = ruleset.pop("num_players", len(players))
-        assert num_players >= len(players)
-        super().__init__(num_players=num_players, **ruleset)
-        self.given_players = players
-        self._assign_players()
+        envargs["num_players"] = envargs.get("num_players", len(players))
+        self.env = GameEnv(**envargs)
+        self.num_given_players = min(len(players), self.env.num_players)
+        self.players = players[:self.num_given_players]
+        self._add_missing_players()
+        self.safe = safe
 
-    ########################
-    #      GAME LOGIC      #
-    ########################
+    def _add_missing_players(self) -> None:
+        num_to_add = self.env.num_players - self.num_given_players
+        added_bots = [BasePlayer(name=f"Bot {i}") for i in range(num_to_add)]
+        self.players.extend(added_bots)
 
-    def _assign_players(self) -> None:
-        # Add players
-        num_to_add = self.num_players - len(self.given_players)
-        added_bots = [Player(name=f"Bot {i}") for i in range(num_to_add)]
-        self.players = self.given_players + added_bots
-        # Fill default roll/policy
-        for player in self.players:
-            if not player.wait_for_roll:
-                player.roll_func = player.roll_func or Game._random_roll
-            if not player.wait_for_play:
-                player.play_func = player.play_func or Game._random_play
-        # Order
-        self.players_permutation = list(range(self.num_players))
-        random.shuffle(self.players_permutation)
-        self.players = [self.players[i] for i in self.players_permutation]
+    @cached_property
+    def players_name(self) -> list[str]:
+        return [player.name for player in self.players]
 
-    ########################
-    #      TURN LOGIC      #
-    ########################
+    def run(self) -> None:
+        """ Plays a game from start to finish. """
+        self.env.reset()
+        while not self.env():
+            cp = self.players[self.env.current_player_index]
+            rollicy = cp.roll_func if cp.rolls else random_roll
+            policy = cp.play_func if cp.plays else random_play
+            # Secure Mode
+            if self.safe:
+                # Roll
+                if self.env.rolled is None:
+                    try:
+                        rolled = rollicy(
+                                      deepcopy(self.env),
+                                      players_name=deepcopy(self.players_name))
+                        assert self.env.roll_is_ok(rolled)
+                        self.env.roll(rolled)
+                    except Exception as e:
+                        _pretty_catch(e, f"Caught the following exception "
+                                         f"while player '{cp.name}' rolled:")
+                        self.env.roll(self.default_rollicy(self.env))
+                # Play
+                try:
+                    played = policy(deepcopy(self.env),
+                                    players_name=deepcopy(self.players_name))
+                    if played not in self.env.legal_plays():
+                        played = self.default_policy(self.env)
+                    self.env.play(played)
+                except Exception as e:
+                    print("lkjlkjkj")
+                    _pretty_catch(e, f"Caught the following exception "
+                                     f"while player '{cp.name}' played:")
+                    print("lkjlkjkj")
+                    self.env.play(self.default_policy(self.env))
+            # Normal Mode
+            else:
+                # Roll
+                if self.env.rolled is None:
+                    rolled = rollicy(self.env, players_name=self.players_name)
+                    self.env.roll(rolled)
+                # Play
+                played = policy(self.env, players_name=self.players_name)
+                if played is None:
+                    played = self.default_policy(self.env)
+                self.env.play(played)
 
-    def _initialize_turn(self) -> None:
-        super()._initialize_turn()
-        self.next_step = self._player_roll
 
-    def roll(self, roll_: Roll) -> None:
-        super().roll(roll_)
-        self.next_step = self._player_play
+def _width(str_: str):
+    """ Width of a string in console. Only manages `\t` and `\n`. """
+    return max(map(len, map(str.rstrip, str_.expandtabs().split('\n'))))
 
-    def _player_roll(self) -> None:
-        """ Makes current player roll if possible. """
-        if self.current_player.wait_for_roll:
-            self.next_step = None
-        else:
-            self.roll(self.current_player('roll', self))
 
-    def play(self, played: Play) -> None:
-        """ Same as `GameEnv.play` but random upon illegal play. """
-        self.played = (played
-                       if played in self._legal_plays()
-                       else self._random_play())
-        self.next_step = self._end_turn
+def _pretty_catch(e: Exception, msg: str = 'Caught:') -> None:
+    """ To catch an exception and still show its traceback.
 
-    def _player_play(self) -> None:
-        """ Makes current player play if possible. """
-        if self.current_player.wait_for_play:
-            self.next_step = None
-        else:
-            self.play(self.current_player('play', self))
-
-    ########################
-    #      TURN LOGIC      #
-    ########################
-
-    def _random_roll(self) -> Roll:
-        """ Gives a random roll.
-
-        Since we'll only draw a few random numbers, random.random() is
-        faster than np.random.randint If we wanted to find a lot, we
-        would better use NumPy. See:
-        https://eli.thegreenplace.net/2018/slow-and-fast-methods-for-generating-random-integers-in-python/
-        """
-        N = self.num_casinos
-        roll = []
-        # Own dice
-        roll_own = dict()
-        for _ in range(self.curr_own_dice):
-            rolled = int(N * random.random())
-            roll_own[rolled] = roll_own.get(rolled, 0) + 1
-        roll.append(roll_own)
-        # Xtr dice
-        if self.with_xtr:
-            roll_xtr = dict()
-            for _ in range(self.curr_xtr_dice):
-                rolled = int(N * random.random())
-                roll_xtr[rolled] = roll_xtr.get(rolled, 0) + 1
-            roll.append(roll_xtr)
-        # Return
-        return roll
-
-    def _random_play(self) -> Play:
-        """ Gives a random play. """
-        return random.choice(list(self._legal_plays()))
-
-    ########################
-    #      PROPERTIES      #
-    ########################
-
-    @property
-    def current_player(self) -> Player:
-        return self.players[self.current_player_index]
+    Example:
+        ```
+        Caught the following exception while player 'Bot 0' played:
+        ╭──────────────────────────────────────────────────────────
+        │ Traceback (most recent call last):
+        │   File "/path/to/game.py", line 110, in run
+        │     played = policy(deepcopy(self.env),
+        │              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        │   File "/path/to/policy.py", line 33, in random_play
+        │     return random.choice(None)  # IndexError on purpose
+        │            ^^^^^^^^^^^^^^^^^^^
+        │   File "/path/to/random.py", line 370, in choice
+        │     raise IndexError('Cannot choose from an empty sequence')
+        │ IndexError: Cannot choose from an empty sequence │
+        ╰──────────────────────────────────────────────────╯
+        ```
+    """
+    print(msg)
+    tb = traceback.format_exception(type(e), e, e.__traceback__)
+    tb = ''.join(tb).strip('\n').split('\n')
+    tb = ['╭' + '─' * (_width(msg) - 1)] + ['│ ' + line for line in tb]
+    tb[-1] += ' │'
+    tb.append('╰' + '─' * (_width(tb[-1]) - 2) + '╯')
+    print('\n'.join(tb))

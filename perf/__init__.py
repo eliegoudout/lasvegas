@@ -7,36 +7,37 @@ Exported functions:
 
 __all__ = ['main']
 
-from typing import Any, Iterable
-
 from math import ceil, log10
 from time import perf_counter
+from typing import Any, Sequence
+
 from tqdm import tqdm
 import numpy as np
 import tabulate
 
-from lasvegas.core import GameRules
-from lasvegas.game import Player, Policy, Game
+from lasvegas.act import BasePlayer, Policy
+from lasvegas.core import RuleBook
+from lasvegas.game import Game
 
 
 TimeStat = tuple[float, float, float, float]
 
 
 def main(policy: Policy | None = None,
-         games: int = 1000,
+         games: int = 100,
          out: bool = False,
          /,
-         **ruleset: Any) -> list[TimeStat] | None:
+         **gameargs: Any) -> list[TimeStat] | None:
     """ Runs multiple games and times execution before displaying stats.
 
     Arguments:
     ----------
+        games (int): Number of games to run and gather stats over.
         policy (Policy | None): Policy used as all players in the game.
             If `None`, `Game` will use default -- uniformly random.
-        games (int): Number of games to run and gather stats over.
         out (bool): Default is `False`, meaning results are only
             displayed. If `True`, results are only returned.
-        **ruleset (Any): Ruleset to use for performance measure. If
+        **gameargs (Any): Ruleset to use for performance measure. If
             `num_players` is not specified, all values from
             `GameRules.rulebook_min_players` to
             `GameRules.rulebook_max_players` will be tested.
@@ -48,26 +49,26 @@ def main(policy: Policy | None = None,
             players tested.
     """
     all_num_players = (
-        [ruleset.pop("num_players")]
-        if "num_players" in ruleset
-        else range(GameRules.rulebook_min_players,
-                   GameRules.rulebook_max_players + 1))
+        [gameargs.pop("num_players")]
+        if "num_players" in gameargs
+        else set(RuleBook.xtr_rules))
     results = [
-        run_ruleset(policy, games, num_players=num_players, **ruleset)
+        run_gameset(policy, games, num_players=num_players, **gameargs)
         for num_players in all_num_players]
     if out:
         return results
     else:
         print(f"Game time for policy '{policy and policy.__name__}' "
-              f"over {games} games:")
+              f"{'with ' + str(gameargs) + ' ' if gameargs else ''}"
+              f"(over {games} games):")
         display_results(all_num_players, results)
 
 
-def run_ruleset(
+def run_gameset(
         policy: Policy | None,
         games: int,
-        **ruleset: Any) -> TimeStat:
-    """ Perf measurement logic, given a oplicy and ruleset.
+        **gameargs: Any) -> TimeStat:
+    """ Perf measurement logic, given a oplicy and gameargs.
 
     Elapsed time starts before `Game` instance creation and ends when
     the game is over:
@@ -78,15 +79,15 @@ def run_ruleset(
 
     Arguments:
     ----------
-        policy (Policy | None): Policy used for all players in the game.
         games (int): Number of games to run and time.
-        **ruleset (Any): The ruleset used for measured game.
+        policy (Policy | None): Policy used for all players in the game.
+        **gameargs (Any): Passed to `Game`.
 
     Returns:
     --------
         mean, stdv, min_, max_ (TimeStat): Respectively, the mean,
-            standard deviation, min and max elapsed time over `games`
-            games, in `ms`.
+            standard deviation, min and max elapsed time over
+            `games` games, in `ms`.
 
     Raises:
     -------
@@ -94,12 +95,15 @@ def run_ruleset(
     """
     assert games > 0
     durations = np.zeros(games)
-    num_players = ruleset["num_players"]
-    players = [Player(play_func=policy) for _ in range(num_players)]
-    for i in tqdm(range(games), desc=f"{num_players} players", leave=False):
+    num_players = gameargs["num_players"]
+    players = [BasePlayer(play_func=policy) for _ in range(num_players)]
+    game = Game(players, **gameargs)
+    for i in tqdm(range(games),
+                  desc=f"{num_players} players",
+                  leave=False):
         # Start
         start = perf_counter()
-        Game(players)()
+        game.run()
         # End
         end = perf_counter()
         durations[i] = end - start
@@ -111,25 +115,25 @@ def run_ruleset(
 
 
 def display_results(
-        all_num_players: Iterable[int],
+        all_num_players: Sequence[int],
         results: list[TimeStat]) -> None:
-    """ Displays results from multiple `run_ruleset` calls.
+    """ Displays results from multiple `run_gameset` calls.
 
     Arguments:
     ----------
-        all_num_players (Iterable[int]): All number of players tested.
+        all_num_players (Sequence[int]): All number of players tested.
         results: (list[TimeStat]): The corresponding perf results.
 
     Example of output:
     ```
-    Game time for policy 'None' over 1000 games:
     ╭─────────────┬──────────┬──────────┬──────────┬──────────╮
     │ Num players │ Mean     │ Std      │ Min      │ Max      │
     ├─────────────┼──────────┼──────────┼──────────┼──────────┤
-    │           2 │ 674.6 us │ 112.9 us │ 533.4 us │ 1.566 ms │
-    │           3 │ 776.3 us │ 64.76 us │ 670.5 us │ 1.223 ms │
-    │           4 │ 1.007 ms │ 152.7 us │ 841.8 us │ 2.440 ms │
-    │           5 │ 918.3 us │ 75.86 us │ 809.7 us │ 1.457 ms │
+    │           1 │ 5.791 ms │ 662.2 us │ 4.940 ms │ 8.902 ms │
+    │           2 │ 1.636 ms │ 184.3 us │ 1.377 ms │ 2.310 ms │
+    │           3 │ 2.064 ms │ 178.5 us │ 1.752 ms │ 2.582 ms │
+    │           4 │ 2.718 ms │ 269.3 us │ 2.355 ms │ 3.807 ms │
+    │           5 │ 2.791 ms │ 250.8 us │ 2.457 ms │ 3.742 ms │
     ╰─────────────┴──────────┴──────────┴──────────┴──────────╯
     ```
     """
@@ -137,7 +141,13 @@ def display_results(
     lines = [
         [num_players] + list(map(format_time, result))
         for num_players, result in zip(all_num_players, results)]
-    print(tabulate.tabulate(lines, headers, "rounded_outline"))
+    # Table
+    PADDING_bak = tabulate.MIN_PADDING
+    tabulate.MIN_PADDING = 0
+    table = tabulate.tabulate(lines, headers, "rounded_outline")
+    tabulate.MIN_PADDING = PADDING_bak
+    # Print
+    print(table)
 
 
 def format_time(duration: float, num_digits: int = 4) -> str:

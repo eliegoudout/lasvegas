@@ -1,41 +1,21 @@
-- [x] .LICENSE
-- [x] requirements
-- [x] README
-- [x] Type hinting.
-	- [x] Fix `Callable`s ([discussion](https://github.com/python/typing/discussions/1344)).
-	- [ ] `content.py` ndarrays? (`confront` output) (+ in `ui.py`).
-- [x] Complete docstrings
-- [x] Pypi distribution (`pyproject.toml`)
-	- [x] Remove `requirements.txt`
-- [ ] Complete `confront` doc with `out` example.
-- [ ] Initialize attributes with type hints.
-- [ ] Tests
-- [ ] Add extra documentation (?)
-- [x] Perf
-- [ ] Competition mode (w/ copy of `GameEnv`)
-- [x] players own/xtr dice property/setter/replace in code
-- [x] Think about utilities, in or out of modules? `legal_plays` a method? Could be good.
-- [x] Add `ui`
-- [x] Continue restructuring.
-- [ ] Maybe redo the whole "xtr dice" thing (careful perf)
-- [ ] Better internal attributes/methods conventions.
-- [x] Better linting.
-- [x] Try straightforward get_winners perf.
-- [ ] GameEnv : reset/replay on same instance?
-- [ ] More consistent asserting behaviour
-- [ ] More consistent backquotes.
-- [ ] More consistent `'` and `"`.
-- [x] `greedy_shy` clean code.
-- [x] `GameEnv.__call__`: optional args 'number of steps'...
-- [ ] ...and 'until step `step`'.
-- [ ] Better `opt_tqdm`.
-- [ ] Rethink `roll` structure (natural/dict vs sci)
-- [x] Remove roll empty columns `ui`.
-- [x] Roll = dicts
-- [ ] If game not initialized, current_player_index undef, care `ui.display_*`.
-- [x] Example of policy definition in `README` ?
-- [x] Difference learning env/game env in `README`!
-- [ ] Restructure (mask sections?) `README`?
-- [ ] Weird circular-but-not-really definition of policy/player/game...
-- [ ] Add custom rules to `confront` and `play_vs`.
-- [x] Ruleset: make `type(bills)` `list | dict`? (same for other applicables)
+### Before next release
+
+- [x] `scores` as one matrix.
+- [x] Update README / Documentation
+    - [x] First pass
+    - [x] Re-read
+    - [x] ToC
+- [ ] Changelog
+
+### Optional
+
+- [ ] Unit tests
+- [ ] Random: NumPy rng + seed?
+- [ ] Try to go back to rolled as matrix?
+- [ ] specific xtr_collect?
+- [ ] `GameRules`: Change starting dice to own/others/xtr instead of matrix? -> restricts to symmetric dice starts.
+
+- [x] More policies: `greedy` for score/rank/first
+    - [x] score
+    - [x] first
+- [ ] Look for light optims
