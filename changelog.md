@@ -1,6 +1,10 @@
 ## Unreleased
 
-##### 0.2.0
+##### 0.2.1dev
+
+## Released
+
+##### 0.2.0 – June 9, 2023
 
 - `GameEnv.dice` is now a matrix regrouping players and casinos dice,
 - New flexibility in defining `GameRules`. Enables solo mode.
@@ -8,8 +12,6 @@
 - Added `greedy_score` and `greedy_first`, removed `greedy_shy`.
 - `confront` and `play_vs` now take `**gameargs`.
 - Removed unused `_custom-imports.py` since `0.1.2`
-
-## Released
 
 ##### 0.1.4 – March 29, 2023
 

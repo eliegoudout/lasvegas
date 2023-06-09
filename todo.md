@@ -5,7 +5,7 @@
     - [x] First pass
     - [x] Re-read
     - [x] ToC
-- [ ] Changelog
+- [x] Changelog
 
 ### Optional
 
