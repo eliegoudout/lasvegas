@@ -463,12 +463,22 @@ class GameEnv:
         for attr in attributes:
             setattr(self, attr, getattr(rules, attr))
 
-    def dice_to_roll(self) -> NDArray[int]:
-        """ Number of dice of each colour to roll. """
+    def dice_to_roll(self,
+                     current_dice: NDArray[int] | None = None) -> NDArray[int]:
+        """ Number of dice of each colour to roll.
+
+        Arguments:
+        ----------
+            current_dice (NDArray[int]): If noe `None`, the value for
+                `current_dice` to use instead of `self.current_dice`.
+                Defaults to `None`.
+        """
+        if current_dice is None:
+            current_dice = self.current_dice
         if self.num_players == 1:
-            return np.clip(self.current_dice, None, 1)
+            return np.clip(current_dice, None, 1)
         else:
-            return self.current_dice
+            return current_dice
 
     def roll_is_ok(self, rolled: Roll) -> bool:
         """ Sanity check on the roll.
