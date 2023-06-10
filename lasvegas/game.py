@@ -98,10 +98,13 @@ class Game:
     def run(self) -> None:
         """ Plays a game from start to finish. """
         self.env.reset()
+        play_pol_roll = [(
+                player,
+                player.play_func if player.plays else Game.default_policy,
+                player.roll_func if player.rolls else Game.default_rollicy)
+            for player in self.players]
         while not self.env():
-            cp = self.players[self.env.current_player_index]
-            rollicy = cp.roll_func if cp.rolls else random_roll
-            policy = cp.play_func if cp.plays else random_play
+            cp, policy, rollicy = play_pol_roll[self.env.current_player_index]
             # Secure Mode
             if self.safe:
                 # Roll
