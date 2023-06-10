@@ -464,6 +464,7 @@ class GameEnv:
             setattr(self, attr, getattr(rules, attr))
 
     def dice_to_roll(self,
+                     *,
                      current_dice: NDArray[int] | None = None) -> NDArray[int]:
         """ Number of dice of each colour to roll.
 
