@@ -349,7 +349,7 @@ from typing import Any
 from lasvegas.core import GameEnv, Play
 
 def saver(env: GameEnv, **__: Any) -> Play:
-    """ Plays the least dice possible. """
+    """ Plays the least number of dice possible. """
     return min(env.legal_plays(),
                key=lambda play: sum(sub_roll.get(play, 0)
                                     for sub_roll in env.rolled))
