@@ -24,7 +24,7 @@ __all__ = [
     'play_vs',
 ]
 __author__ = "Élie Goudout"
-__version__ = "0.2.0"
+__version__ = "0.2.1dev"
 
 from .act import BasePlayer, Human
 from .core import GameEnv, GameRules
