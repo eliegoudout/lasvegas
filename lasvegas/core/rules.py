@@ -238,7 +238,7 @@ class GameRules:
         assert np.all(self.bills_pool > 0)
         # Casinos_min
         assert self.casinos_min.dtype == int
-        assert np.all(self.casinos_min > 0)
+        assert np.all(self.casinos_min >= 0)
         # Dice_matrix
         assert self.starting_dice.dtype == int
         assert 0 < len(self.starting_dice) <= len(self.starting_dice.T)

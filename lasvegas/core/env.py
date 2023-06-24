@@ -63,7 +63,8 @@ class GameEnv:
     Attributes Upon Use:
     --------------------
         bills (deque): Bills remaining in the "bank".
-        casinos_bills (list[list[int]]): Bills under all casinos.
+        casinos_bills (list[list[int]]): Bills under all casinos, in
+            ascending order.
         current_player_index (int): Explicit.
         current_round (int): Explicit. Is `0` before first round.
         dice (NDArray[int]): Locates every dice of the game. Shape
@@ -508,7 +509,6 @@ class GameEnv:
 
         Output has shape `(self.num_casinos, self.num_colours)`.
         """
-        assert self.rolled is not None
         res = np.full(self.casinos_dice.shape, 0)
         for i, sub_roll in enumerate(self.rolled):
             for dice, qty in sub_roll.items():

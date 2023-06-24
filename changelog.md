@@ -2,6 +2,9 @@
 
 ##### 0.2.1dev
 
+- `env.dice_to_roll` accepts optional argument `current_dice`.
+- `casinos_min` can be `0`.
+
 ## Released
 
 ##### 0.2.0 – June 9, 2023
